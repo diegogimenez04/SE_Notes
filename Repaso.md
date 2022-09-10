@@ -91,8 +91,10 @@ Definición: La arquitectura de SW de un sistema es la estructura del sistema qu
 * Comprension y comunicacion: Al mostrar la estructura de alto nivel del sistema ocultando la complejidad de sus partes, la descripción arquitectónica facilita la comunicación.
 
 * Reuso: Una de las principales técnicas para incrementar la productividad. Se facilita si a un alto nivel se reusan componentes que proveen un servicio completo.
-* Construccion y evolucion: 
-* Analisis: 
+* Construccion y evolucion: La división provista por la arquitectura servirá para guiar el desarrollo del sistema. Cuáles partes son necesarias construir primero, cuáles partes ya están construidas. Ayuda a asignar equipos de trabajo: las distintas partes pueden construirse por distintos grupos. Durante la evolución del SW, la arquitectura ayuda a decidir cuáles partes necesitan cambiarse para incorporar nuevas características o cambios, y a decidir cuál es el impacto de tales cambios en las otras componentes.
+* Analisis: Es deseable que propiedades de confiabilidad y desempeño puedan determinarse en el diseño; esto permite considerar distintas alternativas de diseño hasta encontrar los niveles de satisfacción deseados.
+
+# Tipos de vistas
 
 # Vista C&C
 Describe los componentes y su interaccion en tiempo de ejecucion
