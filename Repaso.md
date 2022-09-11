@@ -372,4 +372,156 @@ Los modulos funcionalmente cohesivos siempre pueden describirse como una oracion
 
 Dos aspectos de interes en la fase de diseño:
 * El diseño del sistema
-	* El proceso que lleva a cabo el diseño
+* El proceso que lleva a cabo el diseño
+
+### Metodologia de diseño estructurado (SDM)
+Apunta a controlar la estructura, el objetivo (en general tambien, de las metodologias de diseño) es **proveer pautas para auxiliar al diseñador en el proceso de diseño.
+
+**SDM ve al software como una funcion de transformacion que transforma la entrada dada en la salida esperada. El foco en el diseño estructurado es la funcion de transformacion. Utiliza abstraccion funcional y descomposicion funcional
+
+Su objetivo es: Especificar módulos de funciones y sus conexiones siguiendo una estructura jerárquica con bajo acoplamiento y alta cohesión.
+
+Pasos principales de la metodologia:
+1. Reformular el problema como un DFD: El diseño estructurado comienza con un DFD que capture el flujo de datos del sistema propuesto, proveyendo una visión de alto nivel del sistema.
+2. Identificar las entradas y las salidas mas abstractas: Generalmente se procesa la entrada antes de realizar la función principal en un módulo, y se procesa la salida antes de ser entregada. La idea de este paso es separar todas las funciones que procesan las entradas (MAI) y las salidas (MAO), de las funciones "principales" del módulo.
+3. Realizar el primer nivel de factorizacion: Se especifica un módulo de entrada para cada MAI, uno de salida para cada MAO, y uno para cada transformador central y coordinarlos apropiadamente en el módulo principal, efectivamente dividiendo el problema en tres problemas separados.
+4. Factorizar los modulos de entrada, de salida, y transformadores: Se repite el primer nivel de factorización para los módulos de entrada, salida y tansformadores, con el fin de identificar los sub-módulos de cada uno de ellos.
+5. Mejorar la estructura (heuristicas, analisis de transacciones): Se realiza por medio de análisis y heurísticas, algunas pueden ser tamaño del módulo, alcance de efecto del módulo, alcance de control, etc...
+
+## Metricas
+El propósito básico es el de proveer una evaluación cuantitativa del diseño.
+
+### Metricas de red
+Se enfoca en la estructura del diagrama de estructuras, mientras mas parecido a un arbol, mas puro es el diagrama
+
+$Impureza= |V|-|E|-1$
+$Impureza = 0 \rightarrow arbol$
+
+Mientras mas negativo el valor, mayor impureza tiene
+
+### Metricas de estabilidad
+Trata de capturar el impacto en los cambios de diseño. Mientras mas estabilidad, mejor
+
+Estabilidad de un módulo: la cantidad de suposiciones por otros módulos sobre éste.
+
+### Metricas de flujo de informacion
+Las métricas de flujo tienen en cuenta:
+- La complejidad intra-módulo, estimada con el tamaño del módulo en LOC
+- La complejidad inter-módulo, estimada con
+	- **inflow**: flujo de información entrante al módulo
+	- **outflow**: flujo de información saliente del módulo
+
+La complejidad del diseño del modulo C se define como:
+$DC = tamaño \cdot (inflow \cdot outflow)^2$
+
+La métrica anterior define la complejidad sólo en la cantidad de información que fluye hacia adentro y hacia fuera y el tamaño del módulo.
+
+Esta métrica define la complejidad sólo en la cantidad que fluye hacia adentro y hacia afuera, y el tamaño del módulo, pero también es importante medir la cantidad de módulos desde y hacia donde fluye la info (como en la métrica de red), en base a esto, la complejidad del diseño del módulo C se pede definir como:
+
+$DC = fan\_in \cdot fan\_out + inflow \cdot outflow$
+
+Donde fan_in representa la cantidad de modulos que llaman al modulo C, y fan_out los llamados por C
+
+Para usar la metrica se usa el promedio de la complejidad de los modulos y su desviacion estandar para identificar los modulos complejos y los propensos a error:
+Propenso a error si:
+$DC > complej\_media + desv\_std$
+
+Complejo si:
+$complej\_media < DC < complej\_media + desv\_std$
+
+# Diseño orientado a objetos
+## Clases y objetos
+Una **clase** es una plantilla de la cuál se crean objetos, define la estructura y los servicios.
+Una clase tiene:
+- una interfaz que define cuáles partes del objeto pueden accederse desde el exterior
+- un cuerpo implementando las operaciones
+- variables de instancia para retener el estado del objeto
+
+Las operaciones pueden ser públicas, privadas o protegidas, existen operaciones constructoras y destructoras.
+
+Un **objeto** es una instacia de una clase, su propiedad básica es el encapsulamiento.
+Encapsulan datos e información y proveen interfaces para accederlos y modificarlos, brindan abstracción y ocultamiento de información.
+Los objetos tienen:
+- **Identidad**: cada objeto puede ser identificado y tratado como una entidad distinta
+- **Estado persistente**: las llamadas a funciones no retienen el estado
+- **Comportamiento definido por los servicios y el estado**: la respuesta de un mismo objeto depende del estado en el que se encuentra.
+
+## Herencia y polimorfismo
+La **herencia** es una relación entre clases que permite la definición e implementación de una clase, basada en la definición de otra clase.
+Cuando una clase B hereda de A, B toma implícitamente todos los atributos y operaciones de A.
+- B se denomina *subclase* de A
+- A se denomina *superclase* de B
+B se compone de una parte derivada (heredada de A) y una parte incremental (nueva).
+
+En la **herencia estricta**, una subclase toma todas las características de su superclase, en la no estricta la subclase redefine algunas características.
+
+La herencia induce **polimorfismo**, un objeto puede ser de distintos tipos.
+Si B es subclase de A, entonces un objeto de tipo B también es un objeto de tipo A.
+
+## Acoplamiento
+El acoplamiento es un concepto inter-modular, captura la fuerza de interconexión entre módulos.
+
+- **Acoplamiento por interacción**: Ocurre debido a métodos de una clase que invoca a métodos de otra clase. Aumenta el acoplamiento si los métodos acceden partes internas de otros métodos, los métodos manipulan directamenta variables de otras clases, la información se pasa a través de variables temporales. Habrá menor acoplamiento si los métodos se comunican directamente a través de los parámetros, con el menor número posible, pasando la menor cantidad de información posible, pasando sólo datos.
+* **Acoplamiento de componentes**: Ocurre cuando una clase A tiene variables de otra clase C, en particular, si A tiene variables de instancia tipo C, si tiene parámetros de tipo C, o si tiene un método con variables locales de tipo C. Cuando A está acoplado con C, está acoplado con todas sus subclases, habrá menor acoplamiento si las variables de clase C en A son, o bién atributos, o parámetros en un método.
+* **Acoplamiento de herencia**: Dos clases están acopladas si una es subclase de otra. Habrá menor acoplamiento si la subclase sólamente agrega cosas en su parte incremental, sin modificar la parte derivada de su superclase.
+
+## Cohesion
+La **cohesión** es un concepto intra-modular, que captura cuán relacionados están los elementos de un módulo.
+Objetivo: Alta cohesión.
+
+Existen 3 tipos de cohesión:
+- **Cohesión de método**: La cohesión es mayor si cada método implementa una única función claramente definida con todos sus elementos contribuyendo a implementar esta función.
+- **Cohesión de clase**: Una clase debería representar un único concepto con todos sus elementos contribuyendo a este concepto. Si una clase encapsula múltiples concepts, la clase pierde cohesión.
+- **Cohesión de herencia**: Hay 2 razones para definir subclases, generalización-especialización, y reuso, la cohesión es mas alta si la jerarquía se produce como consecuencia de generalización-especialización.
+
+## Principio abierto-cerrado
+"Las entidades de software deben ser abiertas para extenderlas y cerradas para modificarlas"
+
+Debe poder extenderse para adaptar al sistema nuevos requerimientos, pero no deberia modificarse. Esto minimiza el riesgo de "dañar" la funcionalidad existente al ingresar cambios.
+
+### Principio de sustitucion de Liskov
+Un programa que utiliza un objeto O con clase C debería permanecer inalterado si O se reemplaza por cualquier objeto de una subclase de C.
+
+## Object modeling technique
+Object Modeling Technique es una metodología empleada para asistir el diseño, aplicado al final de la etapa de diseño. Consiste de 5 pasos:
+1. **Producir el diagrama de clases**: El mismo diagrama obtenido en el análisis (Que pasa en el sistema? estructura estatica)
+2. **Producir el modelo dinámico y usarlo para definir operaciones de las clases**: El modelo dinámico apunta a especificar cómo cambia el estado de los objetos cuando ocurre un evento. Se encuentran eventos y escenarios. Los eventos son solicitudes de operación y los escenarios son secuencias de eventos en una ejecución particular del sistema. (Cuando pasa?)
+3. **Producir el modelo funcional y usarlo para definir operaciones de las clases**: El modelo funcional describe  las oepraciones que toman lugar en el sistema, especifica cómo computar los valores de salida a partir de la entrada. (Que pasa? estructura de computo)
+4. **Identificar las clases internas y sus operaciones**: El diagrama de clases proviene del dominio del problema, pero se deben considerar cuestiones de implementación, evaluar críticamente cada clase para ver si es necesaria en su forma actual, luego considerar las implementaciones de las operaciones.
+5. **Optimizar y empaquetar**:
+- Agregar asociaciones redundantes, con el fin de optimizar acceso a datos
+- Guardar atributos derivados, con el fin de evitar calculos complejos repetidos
+- Usar tipos genéricos, para mejorar reutilizabilidad
+- Ajustar la herencia
+
+## Metricas
+### Metodos pesados por clase (WMC)
+La complejidad de la clase depende de la cantidad de metodos en la misma
+
+Sean $M_{1} ... M_{n}$ los metodos de la clase C en consideracion
+Sea $C(M_{i})$ la complejidad del metodo i.
+Luego $WMC=\sum_{i=1}^{n} C(M_i)$
+Si WMC alto => la clase es mas propensa a errores
+
+### Profundidad del arbol de herencia (DIT)
+Una clase muy por debajo de la jerarquia de clases puede heredar muchos metodos, lo que dificulta la prediccion de su comportamiento
+
+$DIT(C)$ es la profundidad desde la raiz. Entonces: menor DIT implica menor probabilidad de error en esa clase
+
+### Cantidad de hijos (NOC)
+Cantidad de clases inmediatas de C. Esto da una idea del reuso ya que:
+a > NOC => > reuso
+
+Tambien da una idea de la influencia directa de la clase C sobre otros elementos de diseño: > influencia => > importancia en la correccion del diseño de esta clase
+
+### Acoplamiento entre clases (CBC)
+Cantidad de clases a las cuales esta clase esta acoplada
+
+< acoplamiento de una clase => > independencia de la clase => más fácilmente modificable.
+
+Y ademas: > CBC => > probabilidad de error en esa clase 
+
+### Respuesta para una clase (RFC)
+RFC captura el grado de conexión de los métodos de una clase con otras clases.
+
+RFC de una clase C es la cantidad de métodos que pueden ser invocados como respuesta de un mensaje recibido por un objeto de la clase C.
